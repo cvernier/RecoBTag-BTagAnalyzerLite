@@ -66,6 +66,7 @@ Implementation:
 #include "RecoBTau/JetTagComputer/interface/JetTagComputer.h"
 #include "RecoBTau/JetTagComputer/interface/JetTagComputerRecord.h"
 #include "RecoBTag/SecondaryVertex/interface/TrackKinematics.h"
+#include "RecoBTag/SecondaryVertex/interface/V0Filter.h"
 #include "RecoVertex/VertexPrimitives/interface/ConvertToFromReco.h"
 
 #include "fastjet/contrib/Njettiness.hh"
@@ -284,6 +285,9 @@ class BTagAnalyzerLiteT : public edm::EDAnalyzer
     std::unique_ptr<TMVAEvaluator> evaluator_SL_;
     std::unique_ptr<TMVAEvaluator> evaluator_cascade_;
     std::unique_ptr<TMVAEvaluator> evaluator_all_;
+
+    // track V0 filter
+    reco::V0Filter trackPairV0Filter;
 };
 
 
@@ -298,7 +302,8 @@ BTagAnalyzerLiteT<IPTI,VTX>::BTagAnalyzerLiteT(const edm::ParameterSet& iConfig)
   beta_(iConfig.getParameter<double>("beta")),
   R0_(iConfig.getParameter<double>("R0")),
   njettiness_(fastjet::contrib::OnePass_KT_Axes(), fastjet::contrib::NormalizedMeasure(beta_,R0_)),
-  maxSVDeltaRToJet_(iConfig.getParameter<double>("maxSVDeltaRToJet"))
+  maxSVDeltaRToJet_(iConfig.getParameter<double>("maxSVDeltaRToJet")),
+  trackPairV0Filter(iConfig.getParameter<edm::ParameterSet>("trackPairV0Filter"))
 {
   //now do what ever initialization you need
   std::string module_type  = iConfig.getParameter<std::string>("@module_type");
@@ -959,8 +964,9 @@ void BTagAnalyzerLiteT<IPTI,VTX>::processJets(const edm::Handle<PatJetCollection
 
       for (unsigned int itt=0; itt < trackSize; ++itt)
       {
-        const reco::Track & ptrack = *(reco::btag::toTrack(selectedTracks[itt]));
         const TrackRef ptrackRef = selectedTracks[itt];
+        const reco::Track * ptrackPtr = reco::btag::toTrack(ptrackRef);
+        const reco::Track & ptrack = *ptrackPtr;
 
         //--------------------------------
         float decayLength = (ipTagInfo->impactParameterData()[itt].closestToJetAxis - RecoVertex::convertPos(pv->position())).mag();
@@ -1038,6 +1044,28 @@ void BTagAnalyzerLiteT<IPTI,VTX>::processJets(const edm::Handle<PatJetCollection
           JetInfo[iJetColl].Track_isfromSV[JetInfo[iJetColl].nTrack] = 0;
           JetInfo[iJetColl].Track_SV[JetInfo[iJetColl].nTrack] = -1;
           JetInfo[iJetColl].Track_SVweight[JetInfo[iJetColl].nTrack] = 0.;
+        }
+
+        // check if the track is a V0 decay product candidate
+        JetInfo[iJetColl].Track_isfromV0[JetInfo[iJetColl].nTrack] = 0;
+        // apply the V0 filter
+        const reco::Track * trackPairV0Test[2];
+        trackPairV0Test[0] = ptrackPtr;
+
+        for (unsigned int jtt=0; jtt < trackSize; ++jtt)
+        {
+          if (itt == jtt) continue;
+
+          const TrackRef pairTrackRef = selectedTracks[jtt];
+          const reco::Track * pairTrackPtr = reco::btag::toTrack(pairTrackRef);
+
+          trackPairV0Test[1] = pairTrackPtr;
+
+          if (!trackPairV0Filter(trackPairV0Test, 2))
+          {
+            JetInfo[iJetColl].Track_isfromV0[JetInfo[iJetColl].nTrack] = 1;
+            break;
+          }
         }
 
         ++JetInfo[iJetColl].nTrack;
