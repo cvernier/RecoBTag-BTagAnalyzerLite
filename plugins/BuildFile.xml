@@ -8,6 +8,7 @@
   <use name="RecoBTag/SecondaryVertex"/>
   <use name="RecoBTag/BTagAnalyzerLite"/>
   <use name="DataFormats/PatCandidates"/>
+  <use name="DataFormats/BTauReco"/> 
   <use name="CommonTools/UtilAlgos"/>
   <use name="TrackingTools/IPTools"/>
   <use name="TrackingTools/Records"/>

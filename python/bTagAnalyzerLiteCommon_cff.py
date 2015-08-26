@@ -1,6 +1,11 @@
 import FWCore.ParameterSet.Config as cms
 
+from RecoBTag.SecondaryVertex.trackSelection_cff import *
+from RecoBTag.SecondaryVertex.trackPseudoSelection_cff import *
+
 bTagAnalyzerLiteCommon = cms.PSet(
+    trackPseudoSelectionBlock,
+    trackSelectionBlock,
     runFatJets               = cms.bool(False),
     runSubJets               = cms.bool(False),
     allowJetSkipping         = cms.bool(True),
@@ -27,6 +32,7 @@ bTagAnalyzerLiteCommon = cms.PSet(
     R0                       = cms.double(0.8),
     maxSVDeltaRToJet         = cms.double(0.7),
     trackPairV0Filter = cms.PSet(k0sMassWindow = cms.double(0.03)),
+    #pseudoVertexV0Filter = cms.PSet(k0sMassWindow = cms.double(0.05)),
     TriggerPathNames = cms.vstring(
         "HLT_HT750_v*"
     )
