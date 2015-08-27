@@ -1633,13 +1633,6 @@ void BTagAnalyzerLiteT<IPTI,VTX>::processJets(const edm::Handle<PatJetCollection
 
 
       const Vertex &vertex = svTagInfo->secondaryVertex(vtx);
-      /*const reco::Vertex &pvRef ;//=  (*primaryVertex)[0];
-      GlobalVector momentum = GlobalVector(vertex.p4().X(), vertex.p4().Y(), vertex.p4().Z());	
-      double vSig = SecondaryVertex::computeDist3d(pvRef, vertex, momentum , true).significance();
-   
-
-      JetInfo[iJetColl].SV_vtx_dist3dErdd[JetInfo[iJetColl].nSV]  = vSig;	
-      */
       JetInfo[iJetColl].SV_vtx_pt[JetInfo[iJetColl].nSV]  = vertex.p4().pt();
       JetInfo[iJetColl].SV_vtx_eta[JetInfo[iJetColl].nSV] = vertex.p4().eta();
       JetInfo[iJetColl].SV_vtx_phi[JetInfo[iJetColl].nSV] = vertex.p4().phi();

@@ -218,7 +218,6 @@ class JetInfoBranches {
     float SV_dir_x[nMaxSVs_];
     float SV_dir_y[nMaxSVs_];
     float SV_dir_z[nMaxSVs_];
-    float SV_vtx_dist3dErdd[nMaxSVs_];	
     float SV_massVertexEnergyFraction_tighter[nMaxSVs_];
     float SV_EnergyRatio_tighter[nMaxSVs_]; 	
     float SV_vertexBoostOverSqrtJetPt_tighter[nMaxSVs_];
@@ -400,6 +399,10 @@ class JetInfoBranches {
       tree->Branch((name+"SV_dir_z").c_str()           ,SV_dir_z           ,(name+"SV_dir_z["+name+"nSV]/F").c_str());
       tree->Branch((name+"SV_massVertexEnergyFraction").c_str()           ,SV_massVertexEnergyFraction,(name+"SV_massVertexEnergyFraction["+name+"nSV]/F").c_str());
       tree->Branch((name+"SV_vertexBoostOverSqrtJetPt").c_str()           ,SV_vertexBoostOverSqrtJetPt,(name+"SV_vertexBoostOverSqrtJetPt["+name+"nSV]/F").c_str());	
+      tree->Branch((name+"SV_massVertexEnergyFraction_tighter").c_str()           ,SV_massVertexEnergyFraction_tighter,(name+"SV_massVertexEnergyFraction_tighter["+name+"nSV]/F").c_str());
+      tree->Branch((name+"SV_vertexBoostOverSqrtJetPt_tighter").c_str()           ,SV_vertexBoostOverSqrtJetPt_tighter,(name+"SV_vertexBoostOverSqrtJetPt_tighter["+name+"nSV]/F").c_str());
+      tree->Branch((name+"SV_mass_corrected_tighter").c_str()            ,SV_mass_corrected_tighter            ,(name+"SV_mass_corrected_tighter["+name+"nSV]/F").c_str());	
+      tree->Branch((name+"SV_EnergyRatio_tighter").c_str()     ,SV_EnergyRatio_tighter     ,(name+"SV_EnergyRatio_tighter["+name+"nSV]/F").c_str());
     }
 
     void RegisterJetPFLeptonTree(TTree *tree, std::string name="") {
@@ -751,6 +754,11 @@ class JetInfoBranches {
       tree->SetBranchAddress((name+"SV_dir_x").c_str()           ,SV_dir_x           ) ;
       tree->SetBranchAddress((name+"SV_dir_y").c_str()           ,SV_dir_y           ) ;
       tree->SetBranchAddress((name+"SV_dir_z").c_str()           ,SV_dir_z           ) ;
+      tree->SetBranchAddress((name+"SV_massVertexEnergyFraction_tighter").c_str()            ,SV_massVertexEnergyFraction_tighter            ) ;
+      tree->SetBranchAddress((name+"SV_vertexBoostOverSqrtJetPt_tighter").c_str()            ,SV_vertexBoostOverSqrtJetPt_tighter            ) ;
+      tree->SetBranchAddress((name+"SV_mass_corrected_tighter").c_str()            ,SV_mass_corrected_tighter            ) ;
+       tree->SetBranchAddress((name+"SV_EnergyRatio_tighter").c_str()     ,SV_EnergyRatio_tighter     ) ;
+
     }
 
     void ReadJetPFLeptonTree(TTree *tree, std::string name="") {
