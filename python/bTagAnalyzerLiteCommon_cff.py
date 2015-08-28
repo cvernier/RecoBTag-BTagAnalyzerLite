@@ -3,9 +3,12 @@ import FWCore.ParameterSet.Config as cms
 from RecoBTag.SecondaryVertex.trackSelection_cff import *
 from RecoBTag.SecondaryVertex.trackPseudoSelection_cff import *
 
+trackPseudoSelectionBlock_fat= trackPseudoSelectionBlock.trackPseudoSelection.clone(jetDeltaRMax=cms.double(1))
+trackSelectionBlock_fat= trackSelectionBlock.trackSelection.clone(jetDeltaRMax=cms.double(1))
+
 bTagAnalyzerLiteCommon = cms.PSet(
-    trackPseudoSelectionBlock,
-    trackSelectionBlock,
+    trackPseudoSelectionBlock_fat,
+    trackSelectionBlock_fat,
     runFatJets               = cms.bool(False),
     runSubJets               = cms.bool(False),
     allowJetSkipping         = cms.bool(True),

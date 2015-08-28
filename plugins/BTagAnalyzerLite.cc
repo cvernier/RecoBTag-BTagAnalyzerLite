@@ -1102,14 +1102,6 @@ void BTagAnalyzerLiteT<IPTI,VTX>::processJets(const edm::Handle<PatJetCollection
 	GlobalPoint pvv(pv->x(),pv->y(),pv->z());
         edm::RefToBase<Jet> jet = ipTagInfo->jet();
 
-        if (trackSelector(ptrack, data, *jet, pvv))  allKinematics_tighter.add(ptrack);
-        if(trackPseudoSelector(ptrack, data, *jet, pvv)) {
-                vertexKinematics_tighter.add(ptrack);
-		if(JetInfo[iJetColl].Track_isfromV0[JetInfo[iJetColl].nTrack] == 1){
-                vtx_track_ptSum_tighter += std::sqrt(ptrack.momentum().Perp2());
-                vtx_track_ESum_tighter  += std::sqrt(ptrack.momentum().Mag2() + ROOT::Math::Square(ParticleMasses::piPlus));
-		}
-        }
 
 
         // compute decay length and distance to tau axis
@@ -1139,7 +1131,21 @@ void BTagAnalyzerLiteT<IPTI,VTX>::processJets(const edm::Handle<PatJetCollection
 
           JetInfo[iJetColl].Track_distTau[JetInfo[iJetColl].nTrack]   = distTauAxis;
           JetInfo[iJetColl].Track_lengthTau[JetInfo[iJetColl].nTrack] = decayLengthTau;
+          if (trackSelector(ptrack, data, *jet, pvv) && distTauAxis <0.3)  allKinematics_tighter.add(ptrack);
+          if(trackPseudoSelector(ptrack, data, *jet, pvv) && distTauAxis<0.3) {
+                vertexKinematics_tighter.add(ptrack);
+                if(JetInfo[iJetColl].Track_isfromV0[JetInfo[iJetColl].nTrack] == 1){
+                vtx_track_ptSum_tighter += std::sqrt(ptrack.momentum().Perp2());
+                vtx_track_ESum_tighter  += std::sqrt(ptrack.momentum().Mag2() + ROOT::Math::Square(ParticleMasses::piPlus));
+                }
         }
+
+	
+
+
+	}
+
+
 
         ++JetInfo[iJetColl].nTrack;
       } //// end loop on tracks
@@ -1677,7 +1683,8 @@ void BTagAnalyzerLiteT<IPTI,VTX>::processJets(const edm::Handle<PatJetCollection
       math::XYZTLorentzVector allSum =  allKinematics.weightedVectorSum() ; //allKinematics.vectorSum()
       JetInfo[iJetColl].SV_EnergyRatio[JetInfo[iJetColl].nSV] = vertexSum.E() / allSum.E();
       math::XYZTLorentzVector allSum_tighter =  allKinematics_tighter.weightedVectorSum() ; //allKinematics.vectorSum()
-      JetInfo[iJetColl].SV_EnergyRatio_tighter[JetInfo[iJetColl].nSV] = vertexSum_tighter.E() / allSum_tighter.E();
+      JetInfo[iJetColl].SV_EnergyRatio_pseudo[JetInfo[iJetColl].nSV] = vertexSum_tighter.E() / allSum_tighter.E();
+      JetInfo[iJetColl].SV_EnergyRatio_tighter[JetInfo[iJetColl].nSV] = vertexSum.E() / allSum_tighter.E();
 	
 
 
